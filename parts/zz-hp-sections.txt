@@ -1,0 +1,17 @@
+# Hidden Patterns section markers. The logo's shapes, left to right, follow the book's section order.
+# Start & End has no shape. Shortcodes: :foundations: :circle: :logo: etc.,
+# with .open (outline) or .cap (cap height) after the name, e.g. :practice.open:
+@ alias
+foundations hp.circle
+structuring hp.triangle
+direction hp.parallelogram
+practice hp.square
+learning hp.star
+space hp.pentagon
+circle hp.circle
+triangle hp.triangle
+parallelogram hp.parallelogram
+square hp.square
+star hp.star
+pentagon hp.pentagon
+logo hp.circle hp.triangle hp.parallelogram hp.square hp.star hp.pentagon

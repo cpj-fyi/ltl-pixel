@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="LTL Pixel is an original pixel serif by Clay Parker Jones. Explore the letters, try the styles, and work with the source.">
+<meta name="color-scheme" content="light dark">
+<title>LTL Pixel</title>
+<style>
+:root {
+  --bg: #fff; --fg: #161616; --fg-2: #575757; --fg-3: #666;
+  --rule: #161616; --hair: #d8d8d8; --tile: #f3f3f1; --accent: #d92540;
+  --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --mono: ui-monospace, 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #101010; --fg: #f3f3ef; --fg-2: #b0b0ab; --fg-3: #a1a19c;
+    --rule: #f3f3ef; --hair: #3a3a38; --tile: #1b1b1a; --accent: #ff526b; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #101010; --fg: #f3f3ef; --fg-2: #b0b0ab; --fg-3: #a1a19c;
+  --rule: #f3f3ef; --hair: #3a3a38; --tile: #1b1b1a; --accent: #ff526b; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: 24px; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-underline-offset: 4px; }
+a:hover { color: var(--accent); }
+button, select, textarea { font: inherit; }
+button, select { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.wrap { width: min(100%, 1280px); margin: 0 auto; padding-inline: max(24px, env(safe-area-inset-left)); }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.skip { position: absolute; top: -60px; left: 24px; padding: 10px; background: var(--bg); z-index: 2; }
+.skip:focus { top: 8px; }
+canvas.px { display: block; flex-shrink: 0; }
+.mono { font: 12px/1.5 var(--mono); color: var(--fg-3); }
+.masthead { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 24px; border-bottom: 1px solid var(--rule); }
+.masthead .byline { font-size: 13px; white-space: nowrap; }
+.masthead nav { display: flex; gap: 24px; align-items: center; font-size: 13px; }
+.masthead a { text-decoration: none; }
+.theme { background: none; border: 1px solid var(--hair); border-radius: 0; padding: 7px 10px; font-size: 12px; color: var(--fg); }
+.top { padding-block: 54px 40px; border-bottom: 1px solid var(--rule); }
+h1 { margin: 0; font: inherit; }
+#hero { display: block; overflow: hidden; }
+.intro { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 32px; align-items: start; }
+.tagline { margin: 0; font-size: clamp(25px, 3vw, 39px); font-weight: 450; line-height: 1.16; letter-spacing: -.035em; }
+.lede { max-width: 52ch; margin: 0; font-size: 17px; line-height: 1.55; color: var(--fg-2); }
+.meta { display: flex; flex-wrap: wrap; gap: 8px 24px; margin-top: 36px; font: 11px/1.5 var(--mono); color: var(--fg-3); }
+section { padding-block: 44px 56px; border-bottom: 1px solid var(--rule); }
+.section-head { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: baseline; margin-bottom: 30px; }
+h2 { display: flex; gap: 24px; align-items: baseline; margin: 0; font-size: 23px; font-weight: 500; letter-spacing: -.025em; }
+h2 .num { font: 11px/1 var(--mono); color: var(--accent); letter-spacing: 0; }
+p.note { margin: 0; color: var(--fg-2); font-size: 14px; line-height: 1.6; max-width: 65ch; }
+.tester { display: grid; gap: 18px; }
+.tester textarea { display: block; width: 100%; min-height: 92px; resize: vertical; padding: 16px; font: 17px/1.5 var(--sans); background: var(--bg); color: var(--fg); border: 1px solid var(--hair); border-radius: 0; }
+.controls { display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: center; }
+.ctl { display: flex; gap: 12px; align-items: center; font-size: 13px; }
+.ctl select { padding: 8px 30px 8px 10px; background: var(--bg); color: var(--fg); border: 1px solid var(--hair); border-radius: 0; }
+.tester-label { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
+.reset { border: 0; padding: 4px 0; background: transparent; color: var(--fg-2); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
+.stage { background: var(--tile); padding: 32px; min-height: 230px; overflow-x: auto; display: grid; align-content: center; }
+.stage-note { display: flex; justify-content: space-between; gap: 20px; }
+.chips { display: flex; flex-wrap: wrap; }
+.chip { font: 500 11px/1 var(--mono); padding: 10px; border: 1px solid var(--rule); margin: 0 -1px -1px 0; border-radius: 0; background: transparent; color: var(--fg); }
+.chip[aria-pressed="true"] { background: var(--fg); border-color: var(--fg); color: var(--bg); }
+.features { display: grid; }
+.feat { display: grid; grid-template-columns: 240px 1fr; column-gap: 40px; padding-block: 24px; border-top: 1px solid var(--hair); min-width: 0; }
+.feat header { grid-column: 1; grid-row: 1; }
+.feat h3 { margin: 0 0 2px; font-size: 16px; font-weight: 500; letter-spacing: -.015em; }
+.feat code { font: 11px var(--mono); color: var(--fg-3); }
+.feat .row { grid-column: 2; display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 18px; align-items: center; min-width: 0; }
+.feat .row > div { overflow-x: auto; }
+.feat .row span { font: 10px var(--mono); color: var(--fg-3); }
+.feat .row:nth-child(2) { grid-row: 1; }
+.feat .row:nth-child(3) { grid-row: 2; }
+.feat p { grid-column: 1; grid-row: 2; margin: 8px 0 0; font-size: 12px; line-height: 1.55; color: var(--fg-2); }
+.weights { display: grid; }
+.weights .wt, .waterfall .wf { display: grid; grid-template-columns: 160px minmax(0,1fr); gap: 24px; align-items: center; padding-block: 20px; border-top: 1px solid var(--hair); min-width: 0; }
+.weights .wt span, .waterfall .wf span { font: 11px var(--mono); color: var(--fg-3); }
+.weights .wt div, .waterfall .wf div { min-width: 0; overflow-x: auto; }
+.weights .mix { margin-top: 12px; }
+.hp { display: grid; gap: 32px; }
+.hp .table { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 24px; }
+.hp .sec { padding-block: 16px; border-top: 1px solid var(--hair); display: grid; gap: 14px; align-content: start; min-width: 0; }
+.hp .sec b { font-size: 13px; font-weight: 500; }
+.hp .sec code { font: 11px var(--mono); color: var(--fg-3); }
+.hp .sec .forms { display: flex; flex-wrap: wrap; gap: 10px 12px; align-items: end; }
+.hp .sec .forms > div { flex: none; }
+.hp .demo { display: grid; gap: 24px; min-width: 0; }
+.hp .demo > div { overflow-x: auto; }
+.hp .demo span { font: 11px var(--mono); color: var(--fg-3); }
+.charset { display: grid; gap: 32px; }
+.set { display: grid; gap: 12px; }
+.set h3 { margin: 0; font-size: 13px; font-weight: 500; display: flex; gap: 10px; align-items: baseline; }
+.set h3 .mono { font-size: 10px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(58px,1fr)); border-top: 1px solid var(--hair); border-left: 1px solid var(--hair); }
+.cell { padding: 9px 2px 6px; display: grid; justify-items: center; align-content: start; gap: 4px; min-width: 0; border-right: 1px solid var(--hair); border-bottom: 1px solid var(--hair); overflow-x: auto; }
+.cell:hover { background: var(--tile); }
+.cell small { font: 9px/1 var(--mono); color: var(--fg-3); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+footer.end { padding-block: 28px 48px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 20px; font-size: 12px; color: var(--fg-2); }
+footer.end p { margin: 0; }
+footer.end a { white-space: nowrap; }
+noscript { display: block; padding: 24px; border: 1px solid var(--hair); margin-block: 24px; }
+@media (max-width: 760px) {
+  .wrap { padding-inline: 20px; }
+  .masthead { gap: 16px; padding-block: 18px; }
+  .masthead nav { gap: 16px; }
+  .masthead .byline { font-size: 12px; }
+  .masthead .nav-secondary { display: none; }
+  .top { padding-block: 36px 30px; }
+  .intro, .section-head { grid-template-columns: 1fr; gap: 18px; }
+  .intro { margin-top: 20px; }
+  .lede { font-size: 15px; }
+  .meta { gap: 6px 18px; margin-top: 24px; }
+  section { padding-block: 30px 36px; }
+  h2 { font-size: 21px; gap: 18px; }
+  .section-head { margin-bottom: 24px; }
+  .stage { padding: 20px; min-height: 200px; }
+  .feat { grid-template-columns: 1fr; gap: 10px; }
+  .feat header, .feat p, .feat .row, .feat .row:nth-child(2), .feat .row:nth-child(3) { grid-column: 1; grid-row: auto; }
+  .feat header { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .feat p { margin: 0; }
+  .weights .wt, .waterfall .wf { grid-template-columns: 1fr; gap: 10px; }
+  .hp .table { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+  .stage-note { font-size: 10px; }
+}
+@media (max-width: 520px) {
+  .masthead { flex-direction: column; align-items: stretch; gap: 14px; }
+  .masthead nav { justify-content: space-between; }
+}
+@media (max-width: 380px) {
+  .wrap { padding-inline: 16px; }
+  .masthead nav { gap: 12px; }
+  .theme { padding: 6px; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#tester">Skip to type tester</a>
+<div class="wrap">
+  <div class="masthead">
+    <span class="byline">A typeface by Clay Parker Jones</span>
+    <nav aria-label="Main navigation">
+      <a href="#tester">Try it</a>
+      <a class="nav-secondary" href="#characters">Characters</a>
+      <a href="https://github.com/cpj-fyi/ltl-pixel">Source ↗</a>
+      <button type="button" class="theme" id="theme" aria-label="Switch to dark appearance">Dark</button>
+    </nav>
+  </div>
+  <header class="top">
+    <h1><span class="sr-only">LTL Pixel</span><span id="hero" aria-hidden="true"></span></h1>
+    <div class="intro">
+      <p class="tagline">An original pixel serif.</p>
+      <p class="lede">Roman, italic, bold, and bold italic. Includes ligatures, kerning, small caps, and six Hidden Patterns symbols.</p>
+    </div>
+    <div class="meta" id="meta"></div>
+  </header>
+  <main>
+    <noscript>The interactive specimen needs JavaScript. The letter drawings and layout engine are available in the <a href="https://github.com/cpj-fyi/ltl-pixel">source repository</a>.</noscript>
+    <section id="tester" aria-labelledby="tester-heading">
+      <div class="section-head">
+        <h2 id="tester-heading"><span class="num">01</span> Try it</h2>
+        <p class="note">Enter text and adjust the style, cell size, and features.</p>
+      </div>
+      <div class="tester">
+        <div class="tester-label"><label class="mono" for="tt-text">Your text</label><button type="button" class="reset" id="tt-reset">Reset sample</button></div>
+        <textarea id="tt-text" spellcheck="false" maxlength="2400">The quick brown fox jumps over the lazy dog.</textarea>
+        <div class="chips" id="tt-feats" role="group" aria-label="Typographic features"></div>
+        <div class="controls">
+          <label class="ctl" for="tt-style">Style
+            <select id="tt-style"><option value="roman">Roman</option><option value="italic">Italic</option><option value="bold">Bold</option><option value="bold-italic">Bold italic</option></select>
+          </label>
+          <label class="ctl" for="tt-pitch">Cell size
+            <select id="tt-pitch"><option value="2">2 px</option><option value="3">3 px</option><option value="4" selected>4 px</option><option value="6">6 px</option><option value="8">8 px</option><option value="12">12 px</option></select>
+          </label>
+        </div>
+        <div class="stage" tabindex="0" role="region" aria-label="Type preview; scroll horizontally for long words"><canvas class="px" id="tt-canvas" role="img" aria-label="Rendered sample"></canvas></div>
+        <div class="stage-note mono"><span id="tt-status" aria-live="polite"></span><span>1 cell = <span id="tt-scale">4</span> screen pixels</span></div>
+      </div>
+    </section>
+    <section id="styles" aria-labelledby="styles-heading">
+      <div class="section-head"><h2 id="styles-heading"><span class="num">02</span> Four styles</h2><p class="note">Roman, italic, bold, and bold italic.</p></div>
+      <div class="weights" id="weights"></div>
+    </section>
+    <section id="type-features" aria-labelledby="features-heading">
+      <div class="section-head"><h2 id="features-heading"><span class="num">03</span> Typographic features</h2><p class="note">Ligatures, kerning, figures and punctuation, handled by the JavaScript layout engine. Compare each feature off and on.</p></div>
+      <div class="features" id="features"></div>
+    </section>
+    <section id="sizes" aria-labelledby="sizes-heading">
+      <div class="section-head"><h2 id="sizes-heading"><span class="num">04</span> Sizes</h2><p class="note">Cell sizes from 2 to 12 px.</p></div>
+      <div class="waterfall" id="waterfall"></div>
+    </section>
+    <section id="shapes" aria-labelledby="shapes-heading">
+      <div class="section-head"><h2 id="shapes-heading"><span class="num">05</span> Hidden Patterns</h2><p class="note">Six companion symbols for the book’s six sections. Each comes in solid, outline and cap-height forms.</p></div>
+      <div class="hp" id="hp"></div>
+    </section>
+    <section id="characters" aria-labelledby="characters-heading">
+      <div class="section-head"><h2 id="characters-heading"><span class="num">06</span> Character set</h2><p class="note" id="setnote"></p></div>
+      <div id="charset" class="charset"></div>
+    </section>
+  </main>
+  <footer class="end"><p>LTL Pixel · v5.2 · Clay Parker Jones</p><p><a href="https://github.com/cpj-fyi/ltl-pixel">Source &amp; documentation ↗</a></p></footer>
+</div>
+<script type="text/plain" id="glyphs">__GLYPHS__</script>
+<script>
+__LIB__
+
+(function () {
+  const T = parseTable(document.getElementById('glyphs').textContent);
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const dpr = () => window.devicePixelRatio || 1;
+  const draws = [];   // every canvas registers a redraw so theme and resize changes repaint
+
+  function sizeCanvas(c, w, h) {
+    const r = dpr();
+    c.style.width = w + 'px'; c.style.height = h + 'px';
+    c.width = Math.round(w * r); c.height = Math.round(h * r);
+    const ctx = c.getContext('2d'); ctx.setTransform(r, 0, 0, r, 0, 0); ctx.clearRect(0, 0, w, h);
+    return ctx;
+  }
+  // Set text in a canvas. runs: string or runs; returns the canvas.
+  function setText(c, runs, { pitch = 4, maxW = Infinity, features = {}, leading = 1.6, tracking = 0, color } = {}) {
+    const draw = () => {
+      const avail = Number.isFinite(maxW) ? maxW : (c.parentElement.clientWidth || 600);
+      const L = layout(T, runs, { maxWidthCells: Math.max(20, Math.floor(avail / pitch) - 2), leading, features, tracking });
+      let w = 0; for (const ln of L.lines) w = Math.max(w, ln.width);
+      const top = 4;   // room for cap accents above row -10
+      const width = Math.max(1, (w + 4) * pitch);
+      const ctx = sizeCanvas(c, width, (L.height + top + 1) * pitch);
+      c.parentElement.tabIndex = width > avail ? 0 : -1;
+      const fg = css('--fg'), ac = css('--accent');
+      for (const wd of L.words) paint(ctx, wd.cells, { x: pitch, y: top * pitch, pitch, color: color ? css(color) : wd.tag === 'stress' ? ac : fg });
+    };
+    draws.push(draw); draw(); return c;
+  }
+  const mk = (tag, cls, parent) => { const e = document.createElement(tag); if (cls) e.className = cls; if (parent) parent.append(e); return e; };
+
+  // Hero
+  const hero = mk('canvas', 'px', document.getElementById('hero'));
+  hero.setAttribute('aria-hidden', 'true');
+  draws.push(() => {
+    const L = layout(T, [{ text: 'LTL' }, { text: 'Pixel', style: 'italic' }], { features: { kern: true } });
+    const p = Math.max(1, Math.floor(document.getElementById('hero').parentElement.clientWidth / (L.width + 4)));
+    const ctx = sizeCanvas(hero, (L.width + 4) * p, (L.height + 2) * p);
+    for (const wd of L.words) paint(ctx, wd.cells, { x: p, y: p, pitch: p, color: wd.tag ? css('--accent') : css('--fg') });
+  });
+
+  // Meta
+  const count = Object.keys(T.roman).length;
+  document.getElementById('meta').innerHTML = ['v5.2', count + ' roman glyphs', T.kern.size + ' kerning pairs', 'Cap height 10 / x-height 7', 'Bitmap + JavaScript']
+    .map(s => `<span>${s}</span>`).join('');
+
+  // Tester
+  const FEATS = ['liga', 'dlig', 'kern', 'case', 'onum', 'tnum', 'smcp', 'c2sc', 'sups', 'sinf', 'frac', 'ordn', 'smartQuotes'];
+  const defaults = { liga: true, kern: true, case: true, frac: true, smartQuotes: true, ordn: true };
+  const on = { ...defaults };
+  const labels = { liga: 'Ligatures', dlig: 'Discretionary ligatures', kern: 'Kerning', case: 'Case forms', onum: 'Oldstyle figures', tnum: 'Tabular figures', smcp: 'Small caps', c2sc: 'Caps to small caps', sups: 'Superiors', sinf: 'Inferiors', frac: 'Fractions', ordn: 'Ordinals', smartQuotes: 'Smart quotes' };
+  const chipBox = document.getElementById('tt-feats');
+  for (const f of FEATS) {
+    const b = mk('button', 'chip', chipBox); b.type = 'button'; b.id = 'feat-' + f;
+    b.textContent = f === 'smartQuotes' ? 'quotes' : f; b.title = labels[f]; b.setAttribute('aria-label', labels[f]); b.setAttribute('aria-pressed', String(!!on[f]));
+    b.addEventListener('click', () => { on[f] = !on[f]; b.setAttribute('aria-pressed', String(on[f])); drawTester(); });
+  }
+  const ttText = document.getElementById('tt-text'), ttStyle = document.getElementById('tt-style'), ttPitch = document.getElementById('tt-pitch');
+  const ttCanvas = document.getElementById('tt-canvas');
+  function drawTester() {
+    const features = {}; for (const f of FEATS) features[f] = f === 'case' ? (on.case ? 'auto' : false) : !!on[f];
+    const p = +ttPitch.value;
+    const stageStyle = getComputedStyle(ttCanvas.parentElement);
+    const avail = ttCanvas.parentElement.clientWidth - parseFloat(stageStyle.paddingLeft) - parseFloat(stageStyle.paddingRight);
+    const L = layout(T, [{ text: ttText.value, style: ttStyle.value }], { maxWidthCells: Math.max(1, Math.floor(avail / p) - 2), features });
+    const width = Math.max(avail, ...L.lines.map(line => (line.width + 2) * p));
+    const height = Math.max(18 * p, (L.height + 5) * p);
+    // Bound both dimensions and total backing pixels, including high-density displays.
+    const ratio = dpr(), backingWidth = Math.min(4096, Math.round(width * ratio));
+    const backingHeight = Math.min(Math.round(height * ratio), 4096, Math.floor(4194304 / backingWidth));
+    const previewWidth = backingWidth / ratio, previewHeight = backingHeight / ratio;
+    const clipped = backingWidth < Math.round(width * ratio) || backingHeight < Math.round(height * ratio);
+    const ctx = sizeCanvas(ttCanvas, previewWidth, previewHeight);
+    paint(ctx, L.cells, { x: p, y: 4 * p, pitch: p, color: css('--fg') });
+    ttCanvas.setAttribute('aria-label', ttText.value ? ttStyle.options[ttStyle.selectedIndex].text + ': ' + ttText.value : 'Empty type preview');
+    document.getElementById('tt-status').textContent = clipped ? 'Partial preview — shorten the text or choose smaller cells.' : ttText.value ? `${L.lines.length} ${L.lines.length === 1 ? 'line' : 'lines'} · ${ttStyle.options[ttStyle.selectedIndex].text}` : 'Type something above to begin';
+    document.getElementById('tt-scale').textContent = p;
+  }
+  draws.push(drawTester);
+  document.getElementById('tt-reset').addEventListener('click', () => {
+    ttText.value = ttText.defaultValue; ttStyle.value = 'roman'; ttPitch.value = '4';
+    for (const f of FEATS) { on[f] = !!defaults[f]; document.getElementById('feat-' + f).setAttribute('aria-pressed', String(on[f])); }
+    drawTester();
+  });
+  ttText.addEventListener('input', drawTester); ttStyle.addEventListener('change', drawTester); ttPitch.addEventListener('change', drawTester);
+
+  // Feature pairs
+  const PAIRS = [
+    ['Standard ligatures', 'liga', 'office affluent flight', {}, 'On by default.'],
+    ['Discretionary ligatures', 'dlig', 'The strict act', {}, 'Th, ct and st. Off by default; for display only.'],
+    ['Kerning', 'kern', 'Toyota. Very, Fast. LT', {}, 'Pairs measured from the bitmaps and closed toward a two-cell gap.'],
+    ['Case-sensitive forms', 'case', '[HP] – «LTL»', {}, 'Brackets, dashes and guillemets rise to cap height in all-caps words. Automatic.'],
+    ['Oldstyle figures', 'onum', 'Since 1984, 23 teams', {}, 'Figures that sit with lowercase text.'],
+    ['Tabular figures', 'tnum', '1,111 7,480', {}, 'Every figure takes the same width, so columns line up.'],
+    ['Small caps', 'smcp', 'nasa and ideo', {}, 'Caps redrawn at x-height. Add a cell of tracking.', { tracking: 1 }],
+    ['Caps to small caps', 'c2sc', 'NASA and IDEO', {}, 'Acronyms in running text.', { tracking: 1 }],
+    ['Superior figures', 'sups', 'x2 + y3 = n10', {}, 'Footnote markers and exponents. Turn it on for the run that needs it.'],
+    ['Fractions', 'frac', '1/2 3/4 7/8', {}, '½ ¼ ¾ always build this way.'],
+    ['Ordinals', 'ordn', '1a 2o No. 5', {}, 'ª º and the numero sign.'],
+    ['Smart quotes', 'smartQuotes', '"It\'s" -- done...', {}, 'Straight quotes, double hyphens and dots become typographer’s marks.'],
+  ];
+  const box = document.getElementById('features');
+  for (const [name, f, text, extra, note, opt = {}] of PAIRS) {
+    const card = mk('article', 'feat', box);
+    const h = mk('header', '', card); mk('h3', '', h).textContent = name; mk('code', '', h).textContent = f;
+    for (const state of [false, true]) {
+      const row = mk('div', 'row', card); mk('span', '', row).textContent = state ? 'On' : 'Off';
+      const holder = mk('div', '', row); holder.style.minWidth = '0';
+      const c = mk('canvas', 'px', holder); c.setAttribute('aria-label', `${text} with ${f} ${state ? 'on' : 'off'}`);
+      if (f === 'sups') { supsDemo(c, state); continue; }
+      const features = { liga: false, kern: false, case: false, smartQuotes: false, [f]: f === 'case' && state ? 'auto' : state };
+      setText(c, text, { pitch: 3, features, tracking: state ? (opt.tracking || 0) : 0 });
+    }
+    mk('p', '', card).textContent = note;
+  }
+  // Superiors need a word-internal switch, so draw them by shaping pieces side by side.
+  function supsDemo(c, state) {
+    const draw = () => {
+      const p = 3, parts = [['x', false], ['2', true], [' ', false], ['+', false], [' ', false], ['y', false], ['3', true], [' ', false], ['=', false], [' ', false], ['n', false], ['10', true]];
+      let x = 0; const cells = [];
+      for (const [t, s] of parts) {
+        if (t === ' ') { x += 4; continue; }
+        for (const g of shape(T, t, 'roman', { sups: s && state, kern: false, liga: false })) { if (!g.g) continue; for (const cl of g.g.cells) cells.push({ x: cl.x + x, y: cl.y }); x += g.g.adv; }
+      }
+      const ctx = sizeCanvas(c, (x + 4) * p, 17 * p);
+      c.parentElement.tabIndex = (x + 4) * p > c.parentElement.clientWidth ? 0 : -1;
+      paint(ctx, cells, { x: p, y: 13 * p, pitch: p, color: css('--fg') });
+    };
+    draws.push(draw); draw();
+  }
+
+  // Hidden Patterns shapes
+  const hpBox = document.getElementById('hp');
+  const shapeCanvas = (parent, runs, p, label, mono) => {
+    const c = mk('canvas', 'px', parent); c.setAttribute('aria-label', label);
+    const draw = () => {
+      const avail = parent.clientWidth || 600;
+      const L = layout(T, runs, { maxWidthCells: Math.max(20, Math.floor(avail / p) - 2) });
+      let w = 0; for (const ln of L.lines) w = Math.max(w, ln.width);
+      const width = Math.max(1, (w + 3) * p);
+      const ctx = sizeCanvas(c, width, (L.height + 4) * p);
+      parent.tabIndex = width > avail ? 0 : -1;
+      const groups = {};
+      for (const cl of L.cells) { const k = (!mono && cl.n && hpColor(cl.n)) || 'fg'; (groups[k] = groups[k] || []).push(cl); }
+      for (const [k, cells] of Object.entries(groups)) paint(ctx, cells, { x: p, y: 4 * p, pitch: p, color: k === 'fg' ? css('--fg') : k });
+    };
+    draws.push(draw); draw();
+  };
+  const tbl = mk('div', 'table', hpBox);
+  for (const [sec, code] of [['Foundations', 'foundations'], ['Structuring', 'structuring'], ['Direction', 'direction'], ['Practice', 'practice'], ['Learning', 'learning'], ['Space', 'space']]) {
+    const cell = mk('div', 'sec', tbl);
+    mk('b', '', cell).textContent = sec;
+    const forms = mk('div', 'forms', cell);
+    for (const [suffix, p] of [['.cap', 3], ['', 3], ['.open', 3]]) { const h = mk('div', '', forms); shapeCanvas(h, ':' + code + suffix + ':', p, sec + ' ' + (suffix || 'solid')); }
+    mk('code', '', cell).textContent = ':' + code + ':';
+  }
+  const demo = mk('div', 'demo', hpBox);
+  const ex = (label, runs, p) => { const d = mk('div', '', demo); mk('span', '', d).textContent = label; const h = mk('div', '', d); h.style.minWidth = '0'; shapeCanvas(h, runs, p, label); };
+  ex(':logo:', ':logo:', 5);
+  ex('Section heading  ·  ":practice: Practice"', [{ text: ':practice: Practice' }], 5);
+  ex('Pattern line  ·  ":structuring: 20. Talent Marketplace"', ':structuring: 20. Talent Marketplace', 3);
+  ex('Progress  ·  solid for done, .open for not yet', ':foundations: :structuring: :direction: :practice.open: :learning.open: :space.open:', 4);
+  ex('Book nav', 'Start & End   :foundations: Foundations   :structuring: Structuring   :direction: Direction   :practice: Practice   :learning: Learning   :space: Space', 3);
+
+  // Weights
+  const wts = document.getElementById('weights');
+  for (const [label, style] of [['Regular', 'roman'], ['Bold', 'bold'], ['Italic', 'italic'], ['Bold italic', 'bold-italic']]) {
+    const row = mk('div', 'wt', wts); mk('span', '', row).textContent = label;
+    const holder = mk('div', '', row); const c = mk('canvas', 'px', holder);
+    c.setAttribute('aria-label', 'Patterns even over plans, ' + label);
+    setText(c, [{ text: 'Patterns even over plans', style }], { pitch: 5 });
+  }
+  const mix = mk('div', 'wt mix', wts); mk('span', '', mix).textContent = 'In use';
+  const mh = mk('div', '', mix); const mc = mk('canvas', 'px', mh);
+  mc.setAttribute('aria-label', 'The differentiators are about power, with power in bold italic');
+  setText(mc, [{ text: 'The differentiators are', style: 'bold' }, { text: 'about' , style: 'bold' }, { text: 'power', style: 'bold-italic', tag: 'stress' }], { pitch: 4 });
+  const mix2 = mk('div', 'wt', wts); mk('span', '', mix2).textContent = 'Body + bold';
+  const mh2 = mk('div', '', mix2); const mc2 = mk('canvas', 'px', mh2);
+  mc2.setAttribute('aria-label', 'Elections. Structured, peer-driven leadership selection; a real process with nominations, rounds and consent.');
+  setText(mc2, [{ text: 'Elections.', style: 'bold' }, { text: 'Structured, peer-driven leadership selection; a real process with nominations, rounds and consent.' }], { pitch: 3 });
+
+  // Waterfall
+  const wf = document.getElementById('waterfall');
+  for (const p of [2, 3, 4, 6, 8, 12]) {
+    const row = mk('div', 'wf', wf); mk('span', '', row).textContent = p + ' px';
+    const holder = mk('div', '', row); const c = mk('canvas', 'px', holder);
+    const sample = p >= 8 ? 'Permission to move' : 'Give important meetings a facilitator. Patterns even over plans.';
+    c.setAttribute('aria-label', sample + ' — ' + p + ' pixels a cell');
+    setText(c, sample, { pitch: p, features: { kern: true } });
+  }
+
+  // Character set
+  const SETS = [
+    ['Capitals', [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ']],
+    ['Lowercase', [...'abcdefghijklmnopqrstuvwxyz']],
+    ['Small caps', [...'abcdefghijklmnopqrstuvwxyz'].map(c => c + '.sc')],
+    ['Italic', [...'abcdefghijklmnopqrstuvwxyz'], 'italic'],
+    ['Ligatures', ['f_f', 'f_i', 'f_l', 'f_f_i', 'f_f_l', 'T_h', 'c_t', 's_t']],
+    ['Italic ligatures', ['f_f', 'f_i', 'f_l', 'f_f_i', 'f_f_l'], 'italic'],
+    ['Lining figures', [...'0123456789']],
+    ['Oldstyle figures', [...'0123456789'].map(c => c + '.onum')],
+    ['Superiors and inferiors', [...[...'0123456789'].map(c => c + '.sups'), '+.sups', '-.sups', '=.sups', '(.sups', ').sups', ...[...'0123456789'].map(c => c + '.sinf')]],
+    ['Fractions and ordinals', ['⁄', 'ª', 'º', '№']],
+    ['Punctuation', [...'.,:;…!?¡¿‘’“”‚„\'"«»‹›-–—()[]{}/\\|·•_']],
+    ['Case forms', ['[.case', '].case', '{.case', '}.case', '-.case', '–.case', '—.case', '«.case', '».case', '‹.case', '›.case', '·.case', '•.case', '¡.case', '¿.case']],
+    ['Symbols', [...'&@#*%‰§¶†‡©®™°′″^~`']],
+    ['Math', [...'+−×÷=±<>']],
+    ['Arrows', [...'←→↑↓↔↕↖↗↘↙⇐⇒⇔↩↪']],
+    ['Arrow case forms', ['←.case', '→.case', '↔.case', '⇐.case', '⇒.case', '⇔.case']],
+    ['Marks and shapes', [...'✓✗●○■□▲▼▶◀★◆◇']],
+    ['Currency', [...'$€£¢¥₹₩₽₺₿¤']],
+    ['More math', [...'≈≠≤≥∞√πµΔΩ∑¬']],
+    ['Unicode superscripts and subscripts', [...'⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎']],
+    ['Spacing marks and hyphens', [...'¨´¸¯¦‐‑‒']],
+    ['Extended Latin', [...'ÆæŒœßÐðÞþØøŁłıȷ']],
+    ['Accented capitals', [...'ÀÁÂÃÄÅÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝŸĀĒĪŌŪČŠŽŘĚĎŤŇĞĂŻĖŚĆŃŹĈĜĤĴŜŬİ']],
+    ['Accented lowercase', [...'àáâãäåçèéêëìíîïñòóôõöùúûüýÿāēīōūčšžřěďťňğăżėśćńźĉĝĥĵŝŭ']],
+  ];
+  const cs = document.getElementById('charset');
+  let shown = 0, missing = [];
+  for (const [title, names, style = 'roman'] of SETS) {
+    const have = names.filter(n => T[style][n]);
+    missing.push(...names.filter(n => !T[style][n]).map(n => style === 'italic' ? n + ' (italic)' : n));
+    if (!have.length) continue;
+    const s = mk('div', 'set', cs);
+    const h = mk('h3', '', s); h.append(title); mk('span', 'mono', h).textContent = have.length;
+    const grid = mk('div', 'grid', s);
+    for (const n of have) {
+      shown++;
+      const cell = mk('div', 'cell', grid); cell.title = n;
+      const c = mk('canvas', 'px', cell); c.setAttribute('aria-label', n);
+      const g = T[style][n], p = 3;
+      const draw = () => {
+        let minx = 0, maxx = g.adv; for (const cl of g.cells) { minx = Math.min(minx, cl.x); maxx = Math.max(maxx, cl.x + 1); }
+        const ctx = sizeCanvas(c, (maxx - minx) * p, 17 * p);
+        paint(ctx, g.cells, { x: -minx * p, y: 14 * p, pitch: p, color: css('--fg') });
+        ctx.fillStyle = css('--accent'); ctx.globalAlpha = .35; ctx.fillRect(0, 14 * p, (maxx - minx) * p, 1); ctx.globalAlpha = 1;
+      };
+      draws.push(draw); draw();
+      mk('small', '', cell).textContent = n.length > 1 && n !== '...' ? n : '';
+    }
+  }
+  document.getElementById('setnote').textContent = `${shown} glyph samples, with the baseline marked in red. The italic combines its own letter drawings with slanted roman forms.` + (missing.length ? ` Not shown: ${missing.join(' ')}` : '');
+
+  let raf = 0;
+  const redraw = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => draws.forEach(d => d())); };
+  let lastW = window.innerWidth;
+  window.addEventListener('resize', () => { if (window.innerWidth !== lastW) { lastW = window.innerWidth; redraw(); } });
+  const themeButton = document.getElementById('theme');
+  const darkPreference = matchMedia('(prefers-color-scheme: dark)');
+  const isDark = () => document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : darkPreference.matches;
+  const syncThemeButton = () => {
+    themeButton.textContent = isDark() ? 'Light' : 'Dark';
+    themeButton.setAttribute('aria-label', 'Switch to ' + (isDark() ? 'light' : 'dark') + ' appearance');
+  };
+  themeButton.addEventListener('click', () => {
+    document.documentElement.dataset.theme = isDark() ? 'light' : 'dark';
+    syncThemeButton();
+  });
+  darkPreference.addEventListener('change', () => { syncThemeButton(); redraw(); });
+  syncThemeButton();
+  new MutationObserver(redraw).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  draws.forEach(d => d());
+  window.done = true;
+})();
+</script>
+
+</body>
+</html>
