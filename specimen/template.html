@@ -7,6 +7,7 @@
 <meta name="color-scheme" content="light dark">
 <title>LTL Pixel</title>
 <style>
+__FONT_FACES__
 :root {
   --bg: #fff; --fg: #161616; --fg-2: #575757; --fg-3: #666;
   --rule: #161616; --hair: #d8d8d8; --tile: #f3f3f1; --accent: #d92540;
@@ -29,8 +30,7 @@ html { scroll-padding-top: 24px; }
 body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.5 var(--sans); -webkit-font-smoothing: antialiased; }
 a { color: inherit; text-underline-offset: 4px; }
 a:hover { color: var(--accent); }
-button, select, textarea { font: inherit; }
-button, select { cursor: pointer; }
+button { font: inherit; cursor: pointer; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
 .wrap { width: min(100%, 1280px); margin: 0 auto; padding-inline: max(24px, env(safe-area-inset-left)); }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
@@ -55,15 +55,19 @@ section { padding-block: 44px 56px; border-bottom: 1px solid var(--rule); }
 h2 { display: flex; gap: 24px; align-items: baseline; margin: 0; font-size: 23px; font-weight: 500; letter-spacing: -.025em; }
 h2 .num { font: 11px/1 var(--mono); color: var(--accent); letter-spacing: 0; }
 p.note { margin: 0; color: var(--fg-2); font-size: 14px; line-height: 1.6; max-width: 65ch; }
-.tester { display: grid; gap: 18px; }
-.tester textarea { display: block; width: 100%; min-height: 92px; resize: vertical; padding: 16px; font: 17px/1.5 var(--sans); background: var(--bg); color: var(--fg); border: 1px solid var(--hair); border-radius: 0; }
-.controls { display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: center; }
-.ctl { display: flex; gap: 12px; align-items: center; font-size: 13px; }
-.ctl select { padding: 8px 30px 8px 10px; background: var(--bg); color: var(--fg); border: 1px solid var(--hair); border-radius: 0; }
-.tester-label { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; }
-.reset { border: 0; padding: 4px 0; background: transparent; color: var(--fg-2); font-size: 12px; text-decoration: underline; text-underline-offset: 3px; }
-.stage { background: var(--tile); padding: 32px; min-height: 230px; overflow-x: auto; display: grid; align-content: center; }
-.stage-note { display: flex; justify-content: space-between; gap: 20px; }
+.tester { display: grid; gap: 20px; }
+.controls { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; }
+.control-group { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.control-label { font: 11px var(--mono); color: var(--fg-3); }
+.stage {
+  --pitch: 4; min-height: 230px; padding: 32px; background: var(--tile); color: var(--fg);
+  font-family: 'LTL Pixel', monospace; font-size: calc(var(--pitch) * 16px);
+  line-height: calc(var(--pitch) * 20px); font-synthesis: none; font-weight: 400;
+  white-space: pre-wrap; overflow-wrap: anywhere; cursor: text; caret-color: var(--accent);
+  -webkit-font-smoothing: auto;
+}
+.stage:empty::before { content: attr(data-placeholder); color: var(--fg-3); pointer-events: none; }
+.stage::selection { background: var(--accent); color: var(--bg); }
 .chips { display: flex; flex-wrap: wrap; }
 .chip { font: 500 11px/1 var(--mono); padding: 10px; border: 1px solid var(--rule); margin: 0 -1px -1px 0; border-radius: 0; background: transparent; color: var(--fg); }
 .chip[aria-pressed="true"] { background: var(--fg); border-color: var(--fg); color: var(--bg); }
@@ -126,11 +130,10 @@ noscript { display: block; padding: 24px; border: 1px solid var(--hair); margin-
   .feat p { margin: 0; }
   .weights .wt, .waterfall .wf { grid-template-columns: 1fr; gap: 10px; }
   .hp .table { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
-  .stage-note { font-size: 10px; }
 }
 @media (max-width: 520px) {
   .masthead { flex-direction: column; align-items: stretch; gap: 14px; }
-  .masthead nav { justify-content: space-between; }
+  .masthead nav { justify-content: space-between; gap: 12px; font-size: 12px; }
 }
 @media (max-width: 380px) {
   .wrap { padding-inline: 16px; }
@@ -146,8 +149,10 @@ noscript { display: block; padding: 24px; border: 1px solid var(--hair); margin-
     <span class="byline">A typeface by CPJ</span>
     <nav aria-label="Main navigation">
       <a href="#tester">Try it</a>
+      <a href="https://cpj-fyi.github.io/ltl-pixel/fonts/LTL-Pixel.zip" download="LTL-Pixel.zip">Download fonts ↓</a>
+      <a href="https://www.cpj.fyi/buy/">Buy the Book</a>
       <a class="nav-secondary" href="#characters">Characters</a>
-      <a href="https://github.com/cpj-fyi/ltl-pixel">Source ↗</a>
+      <a class="nav-secondary" href="https://github.com/cpj-fyi/ltl-pixel">Source ↗</a>
       <button type="button" class="theme" id="theme" aria-label="Switch to dark appearance">Dark</button>
     </nav>
   </div>
@@ -164,22 +169,14 @@ noscript { display: block; padding: 24px; border: 1px solid var(--hair); margin-
     <section id="tester" aria-labelledby="tester-heading">
       <div class="section-head">
         <h2 id="tester-heading"><span class="num">01</span> Try it</h2>
-        <p class="note">Enter text and adjust the style, cell size, and features.</p>
       </div>
       <div class="tester">
-        <div class="tester-label"><label class="mono" for="tt-text">Your text</label><button type="button" class="reset" id="tt-reset">Reset sample</button></div>
-        <textarea id="tt-text" spellcheck="false" maxlength="2400">The quick brown fox jumps over the lazy dog.</textarea>
         <div class="chips" id="tt-feats" role="group" aria-label="Typographic features"></div>
         <div class="controls">
-          <label class="ctl" for="tt-style">Style
-            <select id="tt-style"><option value="roman">Roman</option><option value="italic">Italic</option><option value="bold">Bold</option><option value="bold-italic">Bold italic</option></select>
-          </label>
-          <label class="ctl" for="tt-pitch">Cell size
-            <select id="tt-pitch"><option value="2">2 px</option><option value="3">3 px</option><option value="4" selected>4 px</option><option value="6">6 px</option><option value="8">8 px</option><option value="12">12 px</option></select>
-          </label>
+          <div class="control-group"><span class="control-label" id="style-label">Style</span><div class="chips" id="tt-style" role="group" aria-labelledby="style-label"></div></div>
+          <div class="control-group"><span class="control-label" id="size-label">Cell size</span><div class="chips" id="tt-pitch" role="group" aria-labelledby="size-label"></div></div>
         </div>
-        <div class="stage" tabindex="0" role="region" aria-label="Type preview; scroll horizontally for long words"><canvas class="px" id="tt-canvas" role="img" aria-label="Rendered sample"></canvas></div>
-        <div class="stage-note mono"><span id="tt-status" aria-live="polite"></span><span>1 cell = <span id="tt-scale">4</span> screen pixels</span></div>
+        <div class="stage" id="tt-editor" contenteditable="plaintext-only" role="textbox" aria-label="Type tester" aria-multiline="true" spellcheck="false" autocapitalize="off" autocorrect="off" data-placeholder="Type here">The quick brown fox jumps over the lazy dog.</div>
       </div>
     </section>
     <section id="styles" aria-labelledby="styles-heading">
@@ -187,7 +184,7 @@ noscript { display: block; padding: 24px; border: 1px solid var(--hair); margin-
       <div class="weights" id="weights"></div>
     </section>
     <section id="type-features" aria-labelledby="features-heading">
-      <div class="section-head"><h2 id="features-heading"><span class="num">03</span> Typographic features</h2><p class="note">Ligatures, kerning, figures and punctuation, handled by the JavaScript layout engine. Compare each feature off and on.</p></div>
+      <div class="section-head"><h2 id="features-heading"><span class="num">03</span> Typographic features</h2><p class="note">Compare each feature off and on.</p></div>
       <div class="features" id="features"></div>
     </section>
     <section id="sizes" aria-labelledby="sizes-heading">
@@ -203,7 +200,7 @@ noscript { display: block; padding: 24px; border: 1px solid var(--hair); margin-
       <div id="charset" class="charset"></div>
     </section>
   </main>
-  <footer class="end"><p>LTL Pixel · v5.2 · Clay Parker Jones</p><p><a href="https://github.com/cpj-fyi/ltl-pixel">Source &amp; documentation ↗</a></p></footer>
+  <footer class="end"><p>LTL Pixel · v5.3 · Clay Parker Jones</p><p><a href="https://cpj-fyi.github.io/ltl-pixel/fonts/LTL-Pixel.zip" download="LTL-Pixel.zip">Download all four styles (.ttf) ↓</a></p><p><a href="https://github.com/cpj-fyi/ltl-pixel">Source &amp; documentation ↗</a></p></footer>
 </div>
 <script type="text/plain" id="glyphs">__GLYPHS__</script>
 <script>
@@ -251,7 +248,7 @@ __LIB__
 
   // Meta
   const count = Object.keys(T.roman).length;
-  document.getElementById('meta').innerHTML = ['v5.2', count + ' roman glyphs', T.kern.size + ' kerning pairs', 'Cap height 10 / x-height 7', 'Bitmap + JavaScript']
+  document.getElementById('meta').innerHTML = ['v5.3', count + ' roman glyphs', T.kern.size + ' kerning pairs', 'Cap height 10 / x-height 7', 'TTF + WOFF2']
     .map(s => `<span>${s}</span>`).join('');
 
   // Tester
@@ -265,34 +262,41 @@ __LIB__
     b.textContent = f === 'smartQuotes' ? 'quotes' : f; b.title = labels[f]; b.setAttribute('aria-label', labels[f]); b.setAttribute('aria-pressed', String(!!on[f]));
     b.addEventListener('click', () => { on[f] = !on[f]; b.setAttribute('aria-pressed', String(on[f])); drawTester(); });
   }
-  const ttText = document.getElementById('tt-text'), ttStyle = document.getElementById('tt-style'), ttPitch = document.getElementById('tt-pitch');
-  const ttCanvas = document.getElementById('tt-canvas');
-  function drawTester() {
-    const features = {}; for (const f of FEATS) features[f] = f === 'case' ? (on.case ? 'auto' : false) : !!on[f];
-    const p = +ttPitch.value;
-    const stageStyle = getComputedStyle(ttCanvas.parentElement);
-    const avail = ttCanvas.parentElement.clientWidth - parseFloat(stageStyle.paddingLeft) - parseFloat(stageStyle.paddingRight);
-    const L = layout(T, [{ text: ttText.value, style: ttStyle.value }], { maxWidthCells: Math.max(1, Math.floor(avail / p) - 2), features });
-    const width = Math.max(avail, ...L.lines.map(line => (line.width + 2) * p));
-    const height = Math.max(18 * p, (L.height + 5) * p);
-    // Bound both dimensions and total backing pixels, including high-density displays.
-    const ratio = dpr(), backingWidth = Math.min(4096, Math.round(width * ratio));
-    const backingHeight = Math.min(Math.round(height * ratio), 4096, Math.floor(4194304 / backingWidth));
-    const previewWidth = backingWidth / ratio, previewHeight = backingHeight / ratio;
-    const clipped = backingWidth < Math.round(width * ratio) || backingHeight < Math.round(height * ratio);
-    const ctx = sizeCanvas(ttCanvas, previewWidth, previewHeight);
-    paint(ctx, L.cells, { x: p, y: 4 * p, pitch: p, color: css('--fg') });
-    ttCanvas.setAttribute('aria-label', ttText.value ? ttStyle.options[ttStyle.selectedIndex].text + ': ' + ttText.value : 'Empty type preview');
-    document.getElementById('tt-status').textContent = clipped ? 'Partial preview — shorten the text or choose smaller cells.' : ttText.value ? `${L.lines.length} ${L.lines.length === 1 ? 'line' : 'lines'} · ${ttStyle.options[ttStyle.selectedIndex].text}` : 'Type something above to begin';
-    document.getElementById('tt-scale').textContent = p;
+  const editor = document.getElementById('tt-editor');
+  let selectedStyle = 'roman', selectedPitch = 4;
+  const STYLES = [['roman', 'Roman'], ['italic', 'Italic'], ['bold', 'Bold'], ['bold-italic', 'Bold italic']];
+  const styles = document.getElementById('tt-style'), sizes = document.getElementById('tt-pitch');
+  for (const [value, label] of STYLES) {
+    const button = mk('button', 'chip', styles); button.type = 'button';
+    button.textContent = label; button.dataset.value = value;
+    button.setAttribute('aria-pressed', String(value === selectedStyle));
+    button.addEventListener('click', () => {
+      selectedStyle = value;
+      for (const sibling of styles.children) sibling.setAttribute('aria-pressed', String(sibling === button));
+      drawTester();
+    });
   }
-  draws.push(drawTester);
-  document.getElementById('tt-reset').addEventListener('click', () => {
-    ttText.value = ttText.defaultValue; ttStyle.value = 'roman'; ttPitch.value = '4';
-    for (const f of FEATS) { on[f] = !!defaults[f]; document.getElementById('feat-' + f).setAttribute('aria-pressed', String(on[f])); }
-    drawTester();
+  for (const value of [2, 3, 4, 6, 8, 12]) {
+    const button = mk('button', 'chip', sizes); button.type = 'button';
+    button.textContent = value + ' px'; button.dataset.value = value;
+    button.setAttribute('aria-pressed', String(value === selectedPitch));
+    button.addEventListener('click', () => {
+      selectedPitch = value;
+      for (const sibling of sizes.children) sibling.setAttribute('aria-pressed', String(sibling === button));
+      drawTester();
+    });
+  }
+  function drawTester() {
+    editor.style.setProperty('--pitch', selectedPitch);
+    editor.style.fontWeight = selectedStyle.includes('bold') ? '700' : '400';
+    editor.style.fontStyle = selectedStyle.includes('italic') ? 'italic' : 'normal';
+    editor.style.fontFeatureSettings = FEATS.map(f => `"${f === 'smartQuotes' ? 'ss01' : f}" ${on[f] ? 1 : 0}`).join(', ') + ', "ss02" 1';
+  }
+  for (const group of [chipBox, styles, sizes]) group.addEventListener('pointerdown', event => {
+    // Keep the insertion point while changing controls with a mouse or touch.
+    if (event.target.closest('button') && document.activeElement === editor) event.preventDefault();
   });
-  ttText.addEventListener('input', drawTester); ttStyle.addEventListener('change', drawTester); ttPitch.addEventListener('change', drawTester);
+  drawTester();
 
   // Feature pairs
   const PAIRS = [

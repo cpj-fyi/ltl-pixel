@@ -1,0 +1,33 @@
+LTL Pixel
+A pixellated serif by CPJ.
+
+Install
+Unzip this download. Open each .ttf file and choose Install Font on macOS,
+or right-click the files and choose Install on Windows. The family appears
+as LTL Pixel, with Regular, Italic, Bold, and Bold Italic styles.
+
+Features
+The fonts contain ligatures, kerning, small caps, oldstyle and tabular
+figures, superior/inferior figures, fractions, ordinals, and case punctuation.
+Feature controls vary by application. Stylistic set 1 (ss01) converts straight
+quotes, --, ---, and ... for display. Stylistic set 2 (ss02) displays the
+Hidden Patterns colon shortcodes as symbols.
+
+Hidden Patterns symbols
+The six section shapes have Private Use Area Unicode code points:
+              Filled  Cap     Outline
+Foundations   U+E000  U+E006  U+E00C
+Structuring   U+E001  U+E007  U+E00D
+Direction     U+E002  U+E008  U+E00E
+Practice      U+E003  U+E009  U+E00F
+Learning      U+E004  U+E00A  U+E010
+Space         U+E005  U+E00B  U+E011
+All six in order: U+E012.
+
+With ss02 on, use :foundations:, :structuring:, :direction:, :practice:,
+:learning:, :space:, or :logo:. Shape names work too: :circle:, :triangle:,
+:parallelogram:, :square:, :star:, :pentagon:. Add .open or .cap before the
+closing colon, for example :practice.open:.
+
+Source and updates: https://github.com/cpj-fyi/ltl-pixel
+Copyright 2026 Clay Parker Jones. A reuse license has not yet been selected.

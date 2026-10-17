@@ -1,6 +1,6 @@
-// LTL Pixel v5.2: original pixel-serif drawings with OpenType-style features in the layout engine.
-// There is no font binary. merge.py builds glyphs.txt from glyphs-base.txt, parts/*.txt and compose.txt,
-// then adds kerning measured from the bitmaps.
+// LTL Pixel v5.3: original pixel-serif drawings with typographic features in the layout engine.
+// merge.py builds glyphs.txt from glyphs-base.txt, parts/*.txt and compose.txt, then adds measured kerning.
+// font-build/build.py exports the same cell drawings as installable TTF and web WOFF2 fonts.
 //
 // Table syntax (glyphs.txt):
 //   ! cap 10 x 7 desc 3 stair 4         metrics
